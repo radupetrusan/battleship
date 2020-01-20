@@ -3,7 +3,17 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  firebaseConfig: {
+    apiKey: 'AIzaSyCPSc2QlshwBRpj1iNlHGqEbq_HDIS6NZM',
+    authDomain: 'battleship-iasa.firebaseapp.com',
+    databaseURL: 'https://battleship-iasa.firebaseio.com',
+    projectId: 'battleship-iasa',
+    storageBucket: 'battleship-iasa.appspot.com',
+    messagingSenderId: '145607730489',
+    appId: '1:145607730489:web:c1e46b438b0e73e89ff4e8',
+    measurementId: 'G-D7FWV3HFBJ'
+  }
 };
 
 /*
