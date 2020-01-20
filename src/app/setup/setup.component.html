@@ -1,0 +1,29 @@
+<div class="setup-container">
+    <div class="game-setup">
+        <app-gameboard [personalShips]="placedShips" [shipToPlace]="selectedShip" (shipPlaced)="shipPlaced($event)"></app-gameboard>
+        <div class="remaining-ships-container">
+            <div>Remaining ships: {{remainingShips.length}}</div>
+            <button class="rotate-button" (click)="rotateShips()">Rotate ships</button>
+            <div class="remaining-ships" [class.vertical]="vertical">
+                <div class="ship-item selected-ship" (click)="unselectShip()" *ngIf="!!selectedShip"
+                    [class.vertical]="selectedShip.vertical">
+                    <div class="ship-cell" *ngFor="let cell of [].constructor(selectedShip.size); let i = index"></div>
+                </div>
+                <div class="ship-item" (click)="selectShip(ship)" *ngFor="let ship of remainingShips"
+                    [class.vertical]="ship.vertical">
+                    <div class="ship-cell" *ngFor="let cell of [].constructor(ship.size); let i = index"></div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div>Placed ships: {{placedShips.length}}</div>
+            <div class="placed-ships">
+                <div class="ship-item" *ngFor="let ship of placedShips" [class.vertical]="ship.vertical">
+                    <div class="ship-cell" *ngFor="let cell of [].constructor(ship.size); let i = index"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button [disabled]="!!remainingShips.length">Create game</button>
+</div>

@@ -1,0 +1,231 @@
+@import 'colors';
+
+@mixin overflow-scroll() {
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+@mixin transitionAll ($time, $transitionTiming: ease-out) {
+  -webkit-transition: all $time $transitionTiming;  /* Safari */
+  -moz-transition: all $time $transitionTiming;
+  -o-transition:  all $time $transitionTiming;
+  transition: all $time $transitionTiming;
+}
+
+@mixin transition ($property, $time, $transitionTiming: ease-out) {
+  -webkit-transition: $property $time $transitionTiming;  /* Safari */
+  -moz-transition: $property $time $transitionTiming;
+  -o-transition:  $property $time $transitionTiming;
+  transition: $property $time $transitionTiming;
+}
+
+@mixin boxShadow($shadow) {
+  -webkit-box-shadow: $shadow;
+  -moz-box-shadow: $shadow;
+  box-shadow: $shadow;
+}
+
+@mixin border-radius($size) {
+  -webkit-border-radius:$size;
+  -moz-border-radius:$size;
+  border-radius: $size;
+}
+
+@mixin border-radius-top-left($size) {
+  -webkit-border-top-left-radius: $size;
+  -moz-border-radius-topleft:$size;
+  border-top-left-radius: $size;
+}
+
+@mixin border-radius-top-right($size) {
+  -webkit-border-top-right-radius: $size;
+  -moz-border-radius-topright:$size;
+  border-top-right-radius: $size;
+}
+
+@mixin border-radius-bottom-right($size) {
+  -webkit-border-bottom-right-radius: $size;
+  -moz-border-radius-bottomright:$size;
+  border-bottom-right-radius: $size;
+}
+
+@mixin border-radius-bottom-left($size) {
+  -webkit-border-bottom-left-radius: $size;
+  -moz-border-radius-bottomleft: $size;
+  border-bottom-left-radius: $size;
+}
+
+@mixin border-radius-bottom($size) {
+  @include border-radius-bottom-left($size);
+  @include border-radius-bottom-right($size);
+}
+
+@mixin border-radius-left($size) {
+  @include border-radius-top-left($size);
+  @include border-radius-bottom-left($size);
+}
+
+@mixin border-radius-right($size) {
+  @include border-radius-top-right($size);
+  @include border-radius-bottom-right($size);
+}
+
+@mixin border-radius-top($size) {
+  @include border-radius-top-left($size);
+  @include border-radius-top-right($size);
+}
+
+@mixin box-sizing-border-box() {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@mixin no-wrap-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin diagonal-linear-gradient($colors...) {
+  background: nth($colors, 1); // for browsers that do not support gradients
+  background: -webkit-linear-gradient(top left, $colors...);
+  background: -o-linear-gradient(bottom right, $colors...); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(bottom right, $colors...); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to bottom right, $colors...); /* Standard syntax */
+}
+
+@mixin vertical-linear-gradient($colors...) {
+  background: nth($colors, 1); // for browsers that do not support gradients
+  background: -webkit-linear-gradient($colors); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient($colors); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient($colors); /* For Firefox 3.6 to 15 */
+  background: linear-gradient($colors); /* Standard syntax */
+}
+
+@mixin horizontal-linear-gradient($colors...) {
+  background: nth($colors, 1); // for browsers that do not support gradients
+  background: -webkit-linear-gradient(left, $colors); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(right, $colors); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(right, $colors); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to right, $colors); /* Standard syntax */
+}
+
+@mixin blur {
+  background-color: rgba(9, 9, 9, 0.5);
+  -webkit-backdrop-filter: blur(6px);
+  -moz-backdrop-filter: blur(6px);
+  -o-backdrop-filter: blur(6px);
+  -ms-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+@mixin rotate($degrees) {
+  -webkit-transform: rotate($degrees);
+    -moz-transform: rotate($degrees);
+    -o-transform: rotate($degrees);
+    -ms-transform: rotate($degrees);
+    transform: rotate($degrees);
+}
+
+@mixin alpha-filter($value) {
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=$value * 100)";
+  filter: alpha(opacity=$value * 100);
+  opacity: $value;
+}
+
+@mixin non-selectable-text {
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+/Edge */
+  user-select: none;
+	/* Standard */
+}
+
+$scroll-bar-height: 6px;
+$scroll-bar-width: 6px;
+@mixin scrollbar  {
+  ::-webkit-scrollbar {
+    width: $scroll-bar-width;
+    height: $scroll-bar-height;
+  }
+  
+  /* Track */
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  /* Handle */
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: $very-transparent-black;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: $transparent-black;
+  }
+}
+
+
+@mixin border-horizontal-gradient($size, $color1, $color2, $background-color) {
+  position: relative;
+  border: none;
+  z-index: 0;
+  padding: $size;
+
+  &:before, &:after {
+    content: "";
+    position: absolute;
+
+  }
+
+  &:before {
+    top: -($size);
+    left: -($size);
+    right: -($size);
+    bottom: -($size);
+    @include horizontal-linear-gradient($color1, $color2);
+    z-index: -2;
+    @include border-radius(1.25em);
+  }
+
+  &:after {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: $background-color;
+    z-index: -1;
+    @include border-radius(1.25em);
+  }
+}
+
+@mixin input-placeholder-color ($color) {
+  &::-webkit-input-placeholder { // WebKit, Blink, Edge
+    color: $color;
+  }
+
+  &::-moz-placeholder{ // Mozilla Firefox 4 to 18
+    color: $color;
+  }
+
+  &:-moz-placeholder { // Mozilla Firefox 19+
+    color: $color;
+  }
+
+  &:-ms-input-placeholder { // Internet Explorer 10-11
+    color: $color;
+  }
+}
+
+@keyframes blink {50% { color: transparent }}
+.dots-loader { animation: 1s blink infinite }
+.dots-loader:nth-child(2) { animation-delay: 250ms }
+.dots-loader:nth-child(3) { animation-delay: 500ms }

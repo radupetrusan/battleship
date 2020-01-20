@@ -1,0 +1,25 @@
+.main-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+
+  .logo {
+    width: 50%;
+    margin-bottom: 20vh;
+  }
+
+  .button {
+    background-color: red;
+    color: white;
+    padding: 30px;
+    width: 140px;
+    text-align: center;
+    margin: 20px;
+    font-size: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+}

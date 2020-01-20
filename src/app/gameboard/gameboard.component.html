@@ -1,0 +1,7 @@
+<div class="boardgame-container">
+    <div class="boardgame-row" *ngFor="let item of [].constructor(boardSize); let i = index">
+        <div class="boardgame-cell {{pointStatus(i, j)}}" *ngFor="let item of [].constructor(boardSize); let j = index" (click)="onClick(i, j)" (mouseenter)="onHover(i, j)">
+            
+        </div>
+    </div>
+</div>
