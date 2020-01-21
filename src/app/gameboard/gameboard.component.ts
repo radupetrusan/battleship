@@ -60,6 +60,19 @@ export class GameboardComponent implements OnInit {
         break;
 
       case 'attack': {
+        if (!!this.gameService.currentGame) {
+          if (this.pointIsFound(this.gameService.currentGame.enemyDestroyedPoints, i, j)) {
+            return;
+          }
+
+          if (this.pointIsFound(this.gameService.currentGame.enemyHitPoints, i, j)) {
+            return;
+          }
+
+          if (this.pointIsFound(this.gameService.currentGame.enemyMissedPoints, i, j)) {
+            return;
+          }
+        }
         this.selectionPoints.push(new HitPoint({ i, j }));
       }
 
@@ -89,6 +102,21 @@ export class GameboardComponent implements OnInit {
         if (!this.gameService.yourTurn) {
           return;
         }
+
+        if (!!this.gameService.currentGame) {
+          if (this.pointIsFound(this.gameService.currentGame.enemyDestroyedPoints, i, j)) {
+            return;
+          }
+
+          if (this.pointIsFound(this.gameService.currentGame.enemyHitPoints, i, j)) {
+            return;
+          }
+
+          if (this.pointIsFound(this.gameService.currentGame.enemyMissedPoints, i, j)) {
+            return;
+          }
+        }
+
         this.gameService.yourTurn = false;
         const message = new GameMessage({
           hitPoint: new HitPoint({ i, j }),
@@ -105,12 +133,12 @@ export class GameboardComponent implements OnInit {
   pointStatus(i, j) {
     switch (this.boardMode) {
       case 'init': {
-        const point = this.personalPoints.find(p => p.i === i && p.j === j);
-        if (!!point) {
+
+        if (this.pointIsFound(this.personalPoints, i, j)) {
           return 'placed';
         }
 
-        if (!!this.selectionPoints.find(e => e.i === i && e.j === j)) {
+        if (this.pointIsFound(this.selectionPoints, i, j)) {
           return 'selected';
         }
 
@@ -118,7 +146,7 @@ export class GameboardComponent implements OnInit {
       }
 
       case 'attack': {
-        if (this.gameService.yourTurn && !!this.selectionPoints.find(e => e.i === i && e.j === j)) {
+        if (this.gameService.yourTurn && this.pointIsFound(this.selectionPoints, i, j)) {
           return 'selected';
         }
 
@@ -126,46 +154,45 @@ export class GameboardComponent implements OnInit {
           return;
         }
 
-        if (!!this.gameService.currentGame.enemyMissedPoints &&
-          !!this.gameService.currentGame.enemyMissedPoints.find(e => e.i === i && e.j === j)) {
-          return 'missed';
+        if (this.pointIsFound(this.gameService.currentGame.enemyDestroyedPoints, i, j)) {
+          return 'destroyed animated';
         }
 
-        if (!!this.gameService.currentGame.enemyHitPoints &&
-          !!this.gameService.currentGame.enemyHitPoints.find(e => e.i === i && e.j === j)) {
+        if (this.pointIsFound(this.gameService.currentGame.enemyHitPoints, i, j)) {
           return 'hit';
         }
 
-        if (!!this.gameService.currentGame.enemyDestroyedPoints &&
-          !!this.gameService.currentGame.enemyDestroyedPoints.find(e => e.i === i && e.j === j)) {
-          return 'destroyed';
+        if (this.pointIsFound(this.gameService.currentGame.enemyMissedPoints, i, j)) {
+          return 'missed';
         }
 
         break;
       }
 
       case 'defend': {
-        if (!!this.personalPoints.find(p => p.i === i && p.j === j)) {
-          return 'placed';
-        }
 
         if (!this.gameService.currentGame) {
+          if (this.pointIsFound(this.personalPoints, i, j)) {
+            return 'placed';
+          }
+
           return;
         }
 
-        if (!!this.gameService.currentGame.personalMissedPoints &&
-          !!this.gameService.currentGame.personalMissedPoints.find(e => e.i === i && e.j === j)) {
-          return 'missed';
+        if (this.pointIsFound(this.gameService.currentGame.personalDestroyedPoints, i, j)) {
+          return 'destroyed animated';
         }
 
-        if (!!this.gameService.currentGame.personalHitPoints &&
-          !!this.gameService.currentGame.personalHitPoints.find(e => e.i === i && e.j === j)) {
-          return 'hit';
+        if (this.pointIsFound(this.gameService.currentGame.personalHitPoints, i, j)) {
+          return 'hit animated';
         }
 
-        if (!!this.gameService.currentGame.personalDestroyedPoints &&
-          !!this.gameService.currentGame.personalDestroyedPoints.find(e => e.i === i && e.j === j)) {
-          return 'destroyed';
+        if (this.pointIsFound(this.gameService.currentGame.personalMissedPoints, i, j)) {
+          return 'missed animated';
+        }
+
+        if (this.pointIsFound(this.personalPoints, i, j)) {
+          return 'placed';
         }
       }
     }
@@ -175,6 +202,10 @@ export class GameboardComponent implements OnInit {
     if (!!this.personalShips) {
       this.personalShips.forEach(s => this.personalPoints = [...this.personalPoints, ...s.hitPoints]);
     }
+  }
+
+  private pointIsFound(collection: HitPoint[], i, j) {
+    return !!collection && !!collection.find(e => e.i === i && e.j === j);
   }
 
 }

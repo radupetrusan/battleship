@@ -59,7 +59,12 @@ export class SetupComponent implements OnInit {
   }
 
   createGame() {
-    const game = new Game();
+    let totalPoints = 0;
+    this.placedShips.forEach(s => {
+      totalPoints += s.hitPoints.length;
+    });
+
+    const game = new Game({ totalPoints });
     this.gameService.createGame(game, [...this.placedShips]).then(g => {
       this.router.navigate(['/game']);
     });

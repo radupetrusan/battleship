@@ -1,5 +1,9 @@
 @import "../generics";
 
+@mixin blinkAnimation {
+  animation: blink 0.7s normal;
+}
+
 .boardgame-container {
   display: flex;
   flex-flow: column;
@@ -23,19 +27,63 @@
       &.placed {
         background-color: green;
         @include transitionAll(200ms);
+        // @include blinkAnimation();
       }
 
       &.missed {
         background-color: blue;
+        @include transitionAll(200ms);
+        // @include blinkAnimation();
       }
 
       &.hit {
         background-color: orange;
+        @include transitionAll(200ms);
+        // @include blinkAnimation();
       }
 
       &.destroyed {
         background-color: red;
+        @include transitionAll(200ms);
+        // @include blinkAnimation();
+      }
+
+      &.animated {
+        @include blinkAnimation();
       }
     }
+  }
+}
+
+@keyframes blink {
+
+  0%,
+  30% {
+    opacity: 0.5;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  60% {
+    opacity: 0;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  90% {
+    // color: red;
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }

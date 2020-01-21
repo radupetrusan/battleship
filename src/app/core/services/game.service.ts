@@ -78,7 +78,14 @@ export class GameService {
         const collection = this.gameMessagesCollection(this.currentGameId);
         this.firestore
             .collection(collection)
-            .add({ ...message, hitPoint: { ...message.hitPoint } }); // .then(ref => this.changeTurn());
+            .add({
+                ...message,
+                hitPoint: { ...message.hitPoint },
+                destroyedShip: {
+                    ...message.destroyedShip,
+                    hitPoints: !!message.destroyedShip ? [...message.destroyedShip.hitPoints.map(p => ({ ...p })) || []] : []
+                }
+            });
     }
 
     joinGame(gameId: string) {
@@ -150,11 +157,6 @@ export class GameService {
     }
 
     proccessAttack(message: GameMessage) {
-        if (!!message.destroyedShip) {
-            // Treat ship destroyed
-            return;
-        }
-
         let found = false;
 
         this.currentConfiguration.forEach(s => {
@@ -174,22 +176,47 @@ export class GameService {
             hitPoint: { ...message.hitPoint, hitType: found ? HitType.Hit : HitType.Missed }
         });
 
-        this.changeTurn();
         if (found) {
             this.currentGame.personalHitPoints.push(message.hitPoint);
+
+            const hitShip = this.currentConfiguration
+                .find(ship => !!ship.hitPoints.find(p => p.i === message.hitPoint.i && p.j === message.hitPoint.j));
+            let destroyed = true;
+            if (!!hitShip) {
+                hitShip.hitPoints.forEach(p => {
+                    if (!this.currentGame.personalHitPoints.find(pp => pp.i === p.i && pp.j === p.j)) {
+                        destroyed = false;
+                    }
+                });
+                if (destroyed) {
+                    response.destroyedShip = hitShip;
+                    this.currentGame.personalDestroyedPoints = [...this.currentGame.personalDestroyedPoints, ...hitShip.hitPoints];
+
+                    if (this.currentGame.totalPoints === this.currentGame.personalDestroyedPoints.length) {
+                        alert('You lost!');
+                    }
+                }
+            }
         } else {
+            this.changeTurn();
             this.currentGame.personalMissedPoints.push(message.hitPoint);
         }
         this.sendMessage(response);
     }
 
     proccessResponse(message: GameMessage) {
-        if (!!message.destroyedShip) {
-            // Treat ship destroyed
-            return;
+        if (!!message.destroyedShip && !!message.destroyedShip.hitPoints && !!message.destroyedShip.hitPoints.length) {
+            this.yourTurn = true;
+            this.currentGame.enemyDestroyedPoints = [...this.currentGame.enemyDestroyedPoints, ...message.destroyedShip.hitPoints];
+
+            if (this.currentGame.totalPoints === this.currentGame.enemyDestroyedPoints.length) {
+                alert('You won!');
+            }
+
         }
 
         if (message.hitPoint.hitType === HitType.Hit) {
+            this.yourTurn = true;
             this.currentGame.enemyHitPoints.push(message.hitPoint);
         } else {
             this.currentGame.enemyMissedPoints.push(message.hitPoint);
