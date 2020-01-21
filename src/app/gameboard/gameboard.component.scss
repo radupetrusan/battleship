@@ -24,6 +24,18 @@
         background-color: green;
         @include transitionAll(200ms);
       }
+
+      &.missed {
+        background-color: blue;
+      }
+
+      &.hit {
+        background-color: orange;
+      }
+
+      &.destroyed {
+        background-color: red;
+      }
     }
   }
 }

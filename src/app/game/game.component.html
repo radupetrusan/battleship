@@ -1,1 +1,18 @@
-<p>game works!</p>
+<div class="game-container">
+    <div class="game-id" *ngIf="owner">You are the owner of this game. Game id: {{gameId}}</div>
+    <div class="guest" *ngIf="!owner">Your are guest to this game. Enjoy!</div>
+
+    <div class="gameboards-container">
+        <div class="personal-gameboard gameboard">
+            <div class="gameboard-title">My gameboard</div>
+            <app-gameboard [boardMode]="'defend'" [personalShips]="personalShips"></app-gameboard>
+        </div>
+        <div class="enemy-gameboard gameboard">
+            <div class="gameboard-title">Enemy gameboard</div>
+            <app-gameboard [boardMode]="'attack'"></app-gameboard>
+        </div>
+    </div>
+
+    <div class="your-turn" *ngIf="yourTurn">Your Turn!</div>
+    <div class="enemy-turn" *ngIf="!yourTurn">Enemy's Turn!</div>
+</div>

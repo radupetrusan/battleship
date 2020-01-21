@@ -1,0 +1,32 @@
+@import '../generics';
+
+.game-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+
+  .gameboards-container {
+    display: flex;
+
+    .gameboard {
+      padding: 20px;
+
+      .gameboard-title {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+    }
+  }
+
+  .your-turn {
+    color: green;
+  }
+
+  .enemy-turn {
+    color: red;
+  }
+}

@@ -1,0 +1,13 @@
+.join-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+
+  input {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}

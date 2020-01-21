@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ShipsService } from '../core/services';
+import { ShipsService, GameService } from '../core/services';
 import { Ship, HitPoint } from '../shared/models';
+import { Game } from '../shared/models/game';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-setup',
@@ -15,7 +17,15 @@ export class SetupComponent implements OnInit {
 
   vertical = true;
 
-  constructor(private shipsSerivce: ShipsService) { }
+  get joinMode() {
+    return !!this.gameService.currentGameId;
+  }
+
+  constructor(
+    private shipsSerivce: ShipsService,
+    private gameService: GameService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.initShips();
@@ -36,12 +46,28 @@ export class SetupComponent implements OnInit {
 
     this.selectedShip = ship;
     this.remainingShips = this.remainingShips.filter(s => s !== ship);
+  }
 
+  unselectShip() {
+    this.remainingShips.push(this.selectedShip);
+    this.selectedShip = null;
   }
 
   shipPlaced(ship: Ship) {
     this.selectedShip = null;
     this.placedShips.push(ship);
+  }
+
+  createGame() {
+    const game = new Game();
+    this.gameService.createGame(game, [...this.placedShips]).then(g => {
+      this.router.navigate(['/game']);
+    });
+  }
+
+  joinGame() {
+    this.gameService.placeShips([...this.placedShips]);
+    this.router.navigate(['/game']);
   }
 
   private initShips() {

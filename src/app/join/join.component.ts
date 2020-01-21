@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { GameService } from '../core/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-join',
@@ -7,9 +9,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class JoinComponent implements OnInit {
 
-  constructor() { }
+  @ViewChild('joinInput', { static: false }) joinInput: ElementRef;
+
+  constructor(
+    private gameService: GameService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
+  }
+
+  joinGame() {
+    const id = this.joinInput.nativeElement.value;
+    this.gameService.joinGame(id);
+    this.router.navigate(['/setup']);
   }
 
 }

@@ -1,6 +1,7 @@
 <div class="setup-container">
     <div class="game-setup">
-        <app-gameboard [personalShips]="placedShips" [shipToPlace]="selectedShip" (shipPlaced)="shipPlaced($event)"></app-gameboard>
+        <app-gameboard [personalShips]="placedShips" [shipToPlace]="selectedShip" (shipPlaced)="shipPlaced($event)">
+        </app-gameboard>
         <div class="remaining-ships-container">
             <div>Remaining ships: {{remainingShips.length}}</div>
             <button class="rotate-button" (click)="rotateShips()">Rotate ships</button>
@@ -25,5 +26,6 @@
             </div>
         </div>
     </div>
-    <button [disabled]="!!remainingShips.length">Create game</button>
+    <button [disabled]="!!remainingShips.length" (click)="createGame()" *ngIf="!joinMode">Create game</button>
+    <button [disabled]="!!remainingShips.length" (click)="joinGame()" *ngIf="joinMode">Join game</button>
 </div>

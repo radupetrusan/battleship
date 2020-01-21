@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ShipsService } from './services';
+import {
+  ShipsService,
+  GameService
+} from './services';
 
 @NgModule({
   declarations: [],
@@ -9,7 +12,8 @@ import { ShipsService } from './services';
     CommonModule
   ],
   providers: [
-    ShipsService
+    ShipsService,
+    GameService
   ]
 })
 export class CoreModule { }
