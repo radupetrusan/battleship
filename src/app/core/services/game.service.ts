@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { GameMessage } from 'src/app/shared/models/game-message';
 import { ActionType } from 'src/app/shared/models/action-type';
 import { HitType } from 'src/app/shared/models/hit-type';
+import { ReplaySubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +20,10 @@ export class GameService {
     currentGameId: string = null;
     currentConfiguration: Ship[];
     currentGame: Game = null;
+    currentGameAlgorythm: string = null;
     yourTurn = false;
+
+    yourTurn$ = new ReplaySubject<boolean>(null);
 
     constructor(
         private firestore: AngularFirestore,
@@ -63,9 +67,11 @@ export class GameService {
             );
     }
 
-    createGame(game: Game, ships: Ship[]) {
+    createGame(game: Game, ships: Ship[], gameAlgorythm: string) {
         this.currentGameOwner = true;
         this.currentConfiguration = ships;
+        this.currentGameAlgorythm = gameAlgorythm;
+
         return this.firestore.collection(this.gamesCollection)
             .add({ ...game })
             .then(ref => {
@@ -93,12 +99,13 @@ export class GameService {
         this.currentGameId = gameId;
     }
 
-    placeShips(ships: Ship[]) {
+    placeShips(ships: Ship[], gameAlgorythm: string) {
         if (!this.currentGameId) {
             return;
         }
 
         this.currentConfiguration = ships;
+        this.currentGameAlgorythm = gameAlgorythm;
 
         this.firestore
             .collection(this.gamesCollection)
@@ -111,6 +118,7 @@ export class GameService {
         this.currentGameOwner = null;
         this.currentConfiguration = null;
         this.currentGame = null;
+        this.currentGameAlgorythm = null;
     }
 
     changeTurn() {
@@ -193,7 +201,9 @@ export class GameService {
                     this.currentGame.personalDestroyedPoints = [...this.currentGame.personalDestroyedPoints, ...hitShip.hitPoints];
 
                     if (this.currentGame.totalPoints === this.currentGame.personalDestroyedPoints.length) {
-                        alert('You lost!');
+                        setTimeout(() => {
+                            alert('You lost!');
+                        }, 100);
                     }
                 }
             }
@@ -207,6 +217,7 @@ export class GameService {
     proccessResponse(message: GameMessage) {
         if (!!message.destroyedShip && !!message.destroyedShip.hitPoints && !!message.destroyedShip.hitPoints.length) {
             this.yourTurn = true;
+            this.yourTurn$.next(true);
             this.currentGame.enemyDestroyedPoints = [...this.currentGame.enemyDestroyedPoints, ...message.destroyedShip.hitPoints];
 
             if (this.currentGame.totalPoints === this.currentGame.enemyDestroyedPoints.length) {
@@ -217,6 +228,7 @@ export class GameService {
 
         if (message.hitPoint.hitType === HitType.Hit) {
             this.yourTurn = true;
+            this.yourTurn$.next(true);
             this.currentGame.enemyHitPoints.push(message.hitPoint);
         } else {
             this.currentGame.enemyMissedPoints.push(message.hitPoint);

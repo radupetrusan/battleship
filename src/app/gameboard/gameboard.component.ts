@@ -1,16 +1,18 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { Ship, HitPoint } from '../shared/models';
 import { GameMessage } from '../shared/models/game-message';
-import { HitType } from '../shared/models/hit-type';
 import { ActionType } from '../shared/models/action-type';
 import { GameService } from '../core/services';
+import { takeUntil } from 'rxjs/operators';
+import { ReplaySubject } from 'rxjs';
+import { GameBot, RaduBot, CadmielBot, RandomBot } from '../ai';
 
 @Component({
   selector: 'app-gameboard',
   templateUrl: './gameboard.component.html',
   styleUrls: ['./gameboard.component.scss']
 })
-export class GameboardComponent implements OnInit {
+export class GameboardComponent implements OnInit, OnDestroy {
 
   @Input() boardSize = 10;
   @Input() boardMode = 'init';
@@ -22,12 +24,34 @@ export class GameboardComponent implements OnInit {
   selectionPoints: HitPoint[] = [];
   personalPoints: HitPoint[] = [];
 
+  private destroy$ = new ReplaySubject<boolean>(null);
+
+  private gameBot: GameBot;
+
   constructor(
     private gameService: GameService
   ) { }
 
   ngOnInit() {
     this.initBoard();
+    this.subscribeToYourTurn();
+
+    switch (this.gameService.currentGameAlgorythm) {
+      case 'radu':
+        this.gameBot = new RaduBot(this.gameService);
+        break;
+      case 'cadmiel':
+        this.gameBot = new CadmielBot(this.gameService);
+        break;
+      case 'random':
+        this.gameBot = new RandomBot(this.gameService);
+        break;
+    }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   onHover(i, j) {
@@ -50,12 +74,16 @@ export class GameboardComponent implements OnInit {
             }
           }
 
-          this.selectionPoints.forEach(p => {
-            if (!!this.personalPoints.find(pp => pp.i === p.i && pp.j === p.j)) {
-              this.selectionPoints = [];
-              return;
-            }
-          });
+          if (this.shipIntersected(this.selectionPoints)) {
+            this.selectionPoints = [];
+          }
+
+          // this.selectionPoints.forEach(p => {
+          //   if (!!this.personalPoints.find(pp => pp.i === p.i && pp.j === p.j)) {
+          //     this.selectionPoints = [];
+          //     return;
+          //   }
+          // });
         }
         break;
 
@@ -130,6 +158,12 @@ export class GameboardComponent implements OnInit {
     }
   }
 
+  placeShip(ship: Ship, i: number, j: number) {
+    this.shipToPlace = ship;
+    this.onClick(i, j);
+    this.selectionPoints = [];
+  }
+
   pointStatus(i, j) {
     switch (this.boardMode) {
       case 'init': {
@@ -198,6 +232,21 @@ export class GameboardComponent implements OnInit {
     }
   }
 
+  clear() {
+    this.personalPoints = [];
+  }
+
+  shipIntersected(shipPoints: HitPoint[]) {
+    let intersected = false;
+    shipPoints.forEach(p => {
+      if (!!this.personalPoints.find(pp => pp.i === p.i && pp.j === p.j)) {
+        intersected = true;
+      }
+    });
+
+    return intersected;
+  }
+
   private initBoard() {
     if (!!this.personalShips) {
       this.personalShips.forEach(s => this.personalPoints = [...this.personalPoints, ...s.hitPoints]);
@@ -206,6 +255,25 @@ export class GameboardComponent implements OnInit {
 
   private pointIsFound(collection: HitPoint[], i, j) {
     return !!collection && !!collection.find(e => e.i === i && e.j === j);
+  }
+
+  private subscribeToYourTurn() {
+    this.gameService.yourTurn$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(y => {
+        if (this.boardMode !== 'attack' || this.gameService.currentGameAlgorythm === 'manual' || !y) {
+          return;
+        }
+
+        if (!this.gameBot) {
+          return;
+        }
+
+        const hitPoint = this.gameBot.shoot();
+        if (!!hitPoint) {
+          this.onClick(hitPoint.i, hitPoint.j);
+        }
+      });
   }
 
 }

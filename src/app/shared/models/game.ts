@@ -5,6 +5,7 @@ export class Game {
     id: string;
     messages: GameMessage[];
     turn: string;
+    gameAlgorythm: string;
 
     personalMissedPoints: HitPoint[];
     personalHitPoints: HitPoint[];

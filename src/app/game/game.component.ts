@@ -64,6 +64,7 @@ export class GameComponent implements OnInit, OnDestroy {
             (!this.gameService.currentGameOwner && game.turn === 'guest')
           )) {
           this.gameService.yourTurn = true;
+          this.gameService.yourTurn$.next(true);
         } else {
           this.gameService.yourTurn = false;
         }

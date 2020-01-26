@@ -16,12 +16,21 @@
       border: 1px solid white;
       text-align: center;
 
+      .actions {
+        display: flex;
+        button {
+          margin: 3px 10px 0;
+        }
+      }
+
       .rotate-button {
         margin-left: auto;
         margin-right: auto;
+        margin-top: 2px;
       }
 
-      .remaining-ships, .placed-ships {
+      .remaining-ships,
+      .placed-ships {
         flex-wrap: wrap;
 
         &.vertical {
@@ -55,6 +64,6 @@
 
   button {
     margin-top: 30px;
-    width: 150px;
+    width: 230px;
   }
 }

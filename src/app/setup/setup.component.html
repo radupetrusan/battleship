@@ -1,9 +1,13 @@
 <div class="setup-container">
     <div class="game-setup">
-        <app-gameboard [personalShips]="placedShips" [shipToPlace]="selectedShip" (shipPlaced)="shipPlaced($event)">
+        <app-gameboard #gameboard [personalShips]="placedShips" [shipToPlace]="selectedShip" (shipPlaced)="shipPlaced($event)">
         </app-gameboard>
         <div class="remaining-ships-container">
             <div>Remaining ships: {{remainingShips.length}}</div>
+            <div class="actions">
+                <button class="rotate-button" (click)="randomize()">Randomize</button>
+                <button class="rotate-button" (click)="clearShips()">Clear ships</button>
+            </div>
             <button class="rotate-button" (click)="rotateShips()">Rotate ships</button>
             <div class="remaining-ships" [class.vertical]="vertical">
                 <div class="ship-item selected-ship" (click)="unselectShip()" *ngIf="!!selectedShip"
@@ -26,6 +30,13 @@
             </div>
         </div>
     </div>
-    <button [disabled]="!!remainingShips.length" (click)="createGame()" *ngIf="!joinMode">Create game</button>
-    <button [disabled]="!!remainingShips.length" (click)="joinGame()" *ngIf="joinMode">Join game</button>
+    <button [disabled]="!!remainingShips.length" (click)="createGame('manual')" *ngIf="!joinMode">Create game (Manual)</button>
+    <button [disabled]="!!remainingShips.length" (click)="createGame('radu')" *ngIf="!joinMode">Create game (Radu's algorythm)</button>
+    <button [disabled]="!!remainingShips.length" (click)="createGame('cadmiel')" *ngIf="!joinMode">Create game (Cadmiel's algorythm)</button>
+    <button [disabled]="!!remainingShips.length" (click)="createGame('random')" *ngIf="!joinMode">Create game (Random shooter)</button>
+
+    <button [disabled]="!!remainingShips.length" (click)="joinGame('manual')" *ngIf="joinMode">Join game (Manual)</button>
+    <button [disabled]="!!remainingShips.length" (click)="joinGame('radu')" *ngIf="joinMode">Join game (Radu's algorythm)</button>
+    <button [disabled]="!!remainingShips.length" (click)="joinGame('cadmiel')" *ngIf="joinMode">Join game (Cadmiel's algorythm)</button>
+    <button [disabled]="!!remainingShips.length" (click)="joinGame('random')" *ngIf="joinMode">Join game (Random shooter)</button>
 </div>
