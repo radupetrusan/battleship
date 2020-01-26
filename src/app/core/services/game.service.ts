@@ -7,6 +7,7 @@ import { GameMessage } from 'src/app/shared/models/game-message';
 import { ActionType } from 'src/app/shared/models/action-type';
 import { HitType } from 'src/app/shared/models/hit-type';
 import { ReplaySubject } from 'rxjs';
+import { GameBot } from 'src/app/ai';
 
 @Injectable({
     providedIn: 'root'
@@ -21,8 +22,9 @@ export class GameService {
     currentConfiguration: Ship[];
     currentGame: Game = null;
     currentGameAlgorythm: string = null;
-    yourTurn = false;
+    currentGameBot: GameBot = null;
 
+    yourTurn = false;
     yourTurn$ = new ReplaySubject<boolean>(null);
 
     constructor(
@@ -215,6 +217,10 @@ export class GameService {
     }
 
     proccessResponse(message: GameMessage) {
+        if (!!this.currentGameBot) {
+            this.currentGameBot.processResponse(message);
+        }
+
         if (!!message.destroyedShip && !!message.destroyedShip.hitPoints && !!message.destroyedShip.hitPoints.length) {
             this.yourTurn = true;
             this.yourTurn$.next(true);

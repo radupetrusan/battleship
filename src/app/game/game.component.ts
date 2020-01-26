@@ -2,9 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { GameService } from '../core/services';
 import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject } from 'rxjs';
-import { GameMessage } from '../shared/models/game-message';
-import { ActionType } from '../shared/models/action-type';
-import { HitType } from '../shared/models/hit-type';
 import { Game } from '../shared/models/game';
 
 @Component({

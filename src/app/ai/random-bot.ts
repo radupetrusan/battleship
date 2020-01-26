@@ -2,6 +2,7 @@ import { GameBot } from './game-bot';
 import { HitPoint } from '../shared/models';
 import { GameService } from '../core/services';
 import { getRandom } from '../shared/utils/math-operations';
+import { GameMessage } from '../shared/models/game-message';
 
 export class RandomBot implements GameBot {
 
@@ -9,6 +10,10 @@ export class RandomBot implements GameBot {
 
     constructor(private gameService: GameService) {
         this.initBoardPoints();
+    }
+
+    processResponse(message: GameMessage) {
+        throw new Error('Method not implemented.');
     }
 
     shoot(): HitPoint {
