@@ -38,7 +38,7 @@ export class GameboardComponent implements OnInit, OnDestroy {
 
     switch (this.gameService.currentGameAlgorythm) {
       case 'radu':
-        this.gameBot = new RaduBot(this.gameService);
+        this.gameBot = new RaduBot();
         break;
       case 'cadmiel':
         this.gameBot = new CadmielBot(this.gameService);
