@@ -13,7 +13,7 @@ export class RandomBot implements GameBot {
     }
 
     processResponse(message: GameMessage) {
-        throw new Error('Method not implemented.');
+        return;
     }
 
     shoot(): HitPoint {

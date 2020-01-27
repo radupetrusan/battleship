@@ -47,6 +47,8 @@ export class GameboardComponent implements OnInit, OnDestroy {
         this.gameBot = new RandomBot(this.gameService);
         break;
     }
+
+    this.gameService.currentGameBot = this.gameBot;
   }
 
   ngOnDestroy() {
