@@ -18,7 +18,7 @@ export class CadmielBot implements GameBot {
     positions = [];
     probabilities = [];
     hitsSkewProbabilities = true;
-    skewFactor = 3;
+    skewFactor = 2;
     boardSize = 10;
     volleyButton
 

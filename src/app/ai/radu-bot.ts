@@ -1,6 +1,6 @@
 import { GameBot } from './game-bot';
 import { HitPoint, Ship } from '../shared/models';
-import { GameService, ShipsService } from '../core/services';
+import { ShipsService } from '../core/services';
 import { getRandomFromInterval } from '../shared/utils/math-operations';
 import { GameMessage } from '../shared/models/game-message';
 import { ActionType } from '../shared/models/action-type';
@@ -8,11 +8,11 @@ import { HitType } from '../shared/models/hit-type';
 
 const gameSize = 10;
 
-const TYPE_EMPTY = 0; // 0 = water (empty)
-const TYPE_SHIP = 1; // 1 = undamaged ship
-const TYPE_MISS = 2; // 2 = water with a cannonball in it (missed shot)
-const TYPE_HIT = 3; // 3 = damaged ship (hit shot)
-const TYPE_SUNK = 4; // 4 = sunk ship
+const TYPE_EMPTY = 0; // 0 = Water
+const TYPE_SHIP = 1; // 1 = Undamaged ship
+const TYPE_MISS = 2; // 2 = Water with a cannonball in it (missed shot)
+const TYPE_HIT = 3; // 3 = Damaged ship (hit shot)
+const TYPE_SUNK = 4; // 4 = Destroyed ship
 
 const DIRECTION_VERTICAL = 0;
 const DIRECTION_HORIZONTAL = 1;
@@ -34,8 +34,7 @@ export class RaduBot implements GameBot {
     OPEN_LOW_MAX = 20;
     // Amount of randomness when selecting between cells of equal probability
     RANDOMNESS = 0.1;
-    // AI's opening book.
-    // This is the pattern of the first cells for the AI to target
+    // This is the pattern of the first cells for the bot to target
     OPENINGS = [
         new HitPoint({ i: 7, j: 3, weight: getRandomFromInterval(this.OPEN_LOW_MIN, this.OPEN_LOW_MAX) }),
         new HitPoint({ i: 6, j: 2, weight: getRandomFromInterval(this.OPEN_LOW_MIN, this.OPEN_LOW_MAX) }),
@@ -61,13 +60,6 @@ export class RaduBot implements GameBot {
     }
 
     shoot(): HitPoint {
-        // const i = getRandom(9);
-        // const j = getRandom(9);
-        // return new HitPoint({ i, j });
-
-        console.log('Probabilities Grid before shooting:');
-        console.table(this.probGrid);
-
         let maxProbability = 0;
         let maxProbCoords: HitPoint = null;
         let maxProbs: HitPoint[] = [];
@@ -79,6 +71,9 @@ export class RaduBot implements GameBot {
                 this.probGrid[cell.i][cell.j] += cell.weight;
             }
         }
+
+        console.log('Probabilities Grid before shooting:');
+        console.table(this.probGrid);
 
         for (let i = 0; i < gameSize; i++) {
             for (let j = 0; j < gameSize; j++) {
@@ -94,8 +89,6 @@ export class RaduBot implements GameBot {
         maxProbCoords = Math.random() < this.RANDOMNESS ? maxProbs[Math.floor(Math.random() * maxProbs.length)] : maxProbs[0];
 
         return new HitPoint({ i: maxProbCoords.i, j: maxProbCoords.j });
-
-        return null;
     }
 
     processResponse(message: GameMessage) {
@@ -142,7 +135,7 @@ export class RaduBot implements GameBot {
     }
 
     private updateProbs() {
-        const roster: Ship[] = this.virtualFleet.fleetRoster; // TO DO: get this from virtual fleet
+        const roster: Ship[] = this.virtualFleet.fleetRoster;
         let coords: HitPoint[];
         this.resetProbs();
 
@@ -150,11 +143,8 @@ export class RaduBot implements GameBot {
         for (let k = 0; k < roster.length; k++) {
             for (let x = 0; x < gameSize; x++) {
                 for (let y = 0; y < gameSize; y++) {
-                    // if (roster[k].isLegal(x, y, DIRECTION_VERTICAL)) {
                     if (this.shipIsLegal(x, y, DIRECTION_VERTICAL, this.virtualGrid, roster[k].size)) {
                         const ship = this.createVirtualShip(x, y, DIRECTION_VERTICAL, roster[k].size);
-                        // roster[k].create(x, y, DIRECTION_VERTICAL, true);
-                        // coords = roster[k].getAllShipCells();
                         coords = ship.hitPoints;
                         if (this.passesThroughHitCell(coords)) {
                             // tslint:disable-next-line: prefer-for-of
@@ -168,10 +158,7 @@ export class RaduBot implements GameBot {
                             }
                         }
                     }
-                    // if (roster[k].isLegal(x, y, DIRECTION_HORIZONTAL)) {
                     if (this.shipIsLegal(x, y, DIRECTION_HORIZONTAL, this.virtualGrid, roster[k].size)) {
-                        // roster[k].create(x, y, DIRECTION_HORIZONTAL, true);
-                        // coords = roster[k].getAllShipCells();
                         const ship = this.createVirtualShip(x, y, DIRECTION_HORIZONTAL, roster[k].size);
                         coords = ship.hitPoints;
                         if (this.passesThroughHitCell(coords)) {
@@ -187,8 +174,7 @@ export class RaduBot implements GameBot {
                         }
                     }
 
-                    // Set hit cells to probability zero so the AI doesn't
-                    // target cells that are already hit
+                    // Set hit cells to probability 0 so the bot doesn't target cells that are already hit
                     if (this.virtualGrid.cells[x][y] === TYPE_HIT) {
                         this.probGrid[x][y] = 0;
                     }
@@ -219,9 +205,9 @@ export class RaduBot implements GameBot {
     }
 
     private shipIsLegal(x, y, direction, grid: Grid, shipLength: number) {
-        // first, check if the ship is within the grid...
+        // Check if the ship is within the grid
         if (this.shipWithinBounds(x, y, direction, shipLength)) {
-            // ...then check to make sure it doesn't collide with another ship
+            // Check to make sure it doesn't collide with another ship
             for (let i = 0; i < shipLength; i++) {
                 if (direction === DIRECTION_VERTICAL) {
                     if (grid.cells[x + i][y] === TYPE_SHIP ||
@@ -288,7 +274,6 @@ class Grid {
 }
 
 class Fleet {
-    // numShips: number;
     playerGrid: Grid;
     fleetRoster: Ship[];
 
