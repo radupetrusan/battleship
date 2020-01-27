@@ -108,6 +108,8 @@ export class RaduBot implements GameBot {
             message.destroyedShip.hitPoints.forEach(p => {
                 this.virtualGrid.cells[p.i][p.j] = TYPE_SUNK;
             });
+            const ship = this.virtualFleet.fleetRoster.find(s => s.size === message.destroyedShip.size);
+            this.virtualFleet.fleetRoster = this.virtualFleet.fleetRoster.filter(s => s !== ship);
         } else {
             if (message.hitPoint.hitType === HitType.Hit) {
                 this.virtualGrid.cells[message.hitPoint.i][message.hitPoint.j] = TYPE_HIT;
