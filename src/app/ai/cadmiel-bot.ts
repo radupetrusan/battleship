@@ -18,7 +18,7 @@ export class CadmielBot implements GameBot {
     positions = [];
     probabilities = [];
     hitsSkewProbabilities = true;
-    skewFactor = 2;
+    skewFactor = 3;
     boardSize = 10;
     volleyButton
 
@@ -61,7 +61,6 @@ export class CadmielBot implements GameBot {
 
     setupBoard() {
 
-        debugger;
         // initialize positions matrix
         for (var y = 0; y < this.boardSize; y++) {
             this.positions[y] = [];
@@ -71,8 +70,6 @@ export class CadmielBot implements GameBot {
                 this.probabilities[y][x] = 0;
             }
         }
-
-        debugger;
 
         // determine hits to win given the set of ships
         this.hitsMade = this.hitsToWin = 0;
@@ -188,30 +185,6 @@ export class CadmielBot implements GameBot {
         return true;
     }
 
-    beginVolley() {
-        if (this.hitsMade > 0) this.setupBoard();
-        //this.volleyButton.disabled = true;
-        var moves = 0,
-            volley = setInterval(function () {
-                this.fireAtBestPosition();
-                moves++;
-                if (this.hitsMade === this.hitsToWin) {
-                    clearInterval(volley);
-                    //this.volleyButton.disabled = false;
-                }
-            }, 50);
-    }
-
-    fireAtBestPosition() {
-        var pos = this.getBestUnplayedPosition()
-
-        // if (this.positions[x][y] === this.SHIP) {
-        //     this.positions[x][y] = this.HIT;
-        //     this.hitsMade++;
-        // } else this.positions[x][y] = this.MISS;
-
-        this.recalculateProbabilities();
-    }
 
     getBestUnplayedPosition() {
         var bestProb = 0,
